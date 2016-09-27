@@ -2,23 +2,25 @@ import numpy as np
 from Crypto.Util import number
 import math
 
-q = 32
+q = 2**17
 l = int(math.log(q, 2)) + 1
-n = 5
+n = 3
 m = int(n * math.log(q, 2))
 N = (n+1) * l
+error_limit = 1
 
 
 def bitdecomposition(x):
     bits = []
     i = 1
-    while i <= q:
+    while i <= 2**(l-1):
         if i & x:
             bits.append(1)
         else:
             bits.append(0)
         i <<= 1
     return bits
+
 
 def bitdecomposevector(x):
     bitdecomp = []
@@ -29,6 +31,7 @@ def bitdecomposevector(x):
 
     return bitdecomp
 
+
 def bitdecomposearray(a):
     bitdecomp = []
     for raw in a:
@@ -36,17 +39,17 @@ def bitdecomposearray(a):
         bitdecomp.append(bitarray)
     return np.array(bitdecomp)
 
+
 def inversedecomposevec(x):
     inversedecomp = []
-    bit = q.bit_length() - 1
     temp = 0
-    #print x.__len__(), l
     for i in range(0, x.__len__()):
-        temp += x[i] * 2**(i % q.bit_length())
-        if i % q.bit_length() is bit:
+        temp += x[i] * 2**(i % l)
+        if i % l is l-1:
             inversedecomp.append(temp)
             temp = 0
     return np.array(inversedecomp)
+
 
 def inversedecomposearray(a):
     inversedecomp = []
@@ -55,17 +58,21 @@ def inversedecomposearray(a):
         inversedecomp.append(inverse)
     return np.array(inversedecomp)
 
+
 def flattenvec(x):
     return bitdecomposevector(inversedecomposevec(x))
 
+
 def flattenarray(a):
     return bitdecomposearray((inversedecomposearray(a)))
+
 
 def randomvector(length):
     vec = []
     for i in range(0, length):
         vec.append(number.getRandomRange(0, q))
     return np.array(vec)
+
 
 def randomarray(raw, col):
     array = []
@@ -74,6 +81,7 @@ def randomarray(raw, col):
         array.append(randomvector(col))
     return np.array(array)
 
+
 def powerof2(x):
     result = []
     for i in range(0, len(x)):
@@ -81,11 +89,13 @@ def powerof2(x):
             result.append(x[i] * 2**j)
     return np.array(result)
 
+
 def errorvec(length):
     e = []
     for i in range(0, length):
-        e.append(number.getRandomInteger(1))
+        e.append(number.getRandomInteger(error_limit))
     return np.array(e)
+
 
 def errorarray(raw, col):
     array = []
@@ -93,3 +103,6 @@ def errorarray(raw, col):
     for i in range(0, raw):
         array.append(errorvec(col))
     return np.array(array)
+
+
+G = inversedecomposearray(np.identity(N, int)).T
