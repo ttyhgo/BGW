@@ -4,7 +4,7 @@ import math
 
 q = 2**17
 l = int(math.log(q, 2)) + 1
-n = 3
+n = 7
 m = int(n * math.log(q, 2))
 N = (n+1) * l
 error_limit = 1

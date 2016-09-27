@@ -1,5 +1,5 @@
 from Util import *
-
+import time
 
 def keygen():
     t = randomvector(n)
@@ -82,40 +82,41 @@ print np.dot(x[2], y)
 print np.dot(flattenarray(x)[2], y)
 '''
 
+start = time.time()
 pk, sk = keygen()
-'''
-print "====C1===="
-C1 = enc(pk, 1)
-print dec(sk, C1)
-
-print "====C2===="
-C2 = enc(pk, 1)
-print dec(sk, C2)
-
-print "====C3===="
-print (C1+C2)[8]
-C3 = flattenarray(C1+C2)
-print dec(sk, C3)
-
-print "====C4===="
-print np.dot(C1, C2)[8]
-C4 = flattenarray(np.dot(C1, C2))
-print dec(sk, C4)
-'''
+print "KeyGen : %.4lf" %(time.time() - start)
 
 for i in range(0, 10):
     print "========"
+    start = time.time()
     C1 = enc(pk, 0)
-    C2 = enc(pk, 0)
+    print "Enc : %.4f" %(time.time() - start)
 
+    start = time.time()
+    C2 = enc(pk, 1)
+    print "Enc : %.4f" %(time.time() - start)
+
+    start = time.time()
     print dec(sk, C1)
+    print "Dec : %.4f" %(time.time() - start)
+
+    start = time.time()
     print dec(sk, C2)
+    print "Dec : %.4f" %(time.time() - start)
 
+    start = time.time()
     C3 = flattenarray(C1 + C2)
+    print "Add : %.4f" %(time.time() - start)
 
+    start = time.time()
     print dec(sk, C3)
+    print "Dec : %.4f" %(time.time() - start)
 
+    start = time.time()
     C4 = flattenarray(np.dot(C1, C2))
+    print "Mul : %.4f" %(time.time() - start)
 
+    start = time.time()
     print dec(sk, C4)
+    print "Dec : %.4f" %(time.time() - start)
 
